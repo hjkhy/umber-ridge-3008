@@ -194,6 +194,23 @@ function installDl(){
  },true);
 }
 var cached=null;try{cached=sessionStorage.getItem('__ss_pw')}catch(e){}
-if(cached){attempt(cached,true)}
+function askPw(){
+ var b=document.getElementById('box');if(!b)return;
+ b.innerHTML='<h1>\ud83d\udd12</h1><p>password</p>'+
+  '<input id="pw" type="password" autocomplete="current-password" spellcheck="false">'+
+  '<button id="go" type="button">unlock</button><div id="err"></div>';
+ var i=document.getElementById('pw'),g=document.getElementById('go'),e=document.getElementById('err');
+ function submit(){
+  var v=i.value;if(!v)return;
+  e.textContent='';g.disabled=true;
+  attempt(v,false).then(function(ok){
+   if(!ok){e.textContent='wrong password';g.disabled=false;i.select();}
+  });
+ }
+ g.addEventListener('click',submit);
+ i.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.keyCode===13)submit()});
+ try{i.focus()}catch(e){}
+}
+if(cached){attempt(cached,true).then(function(ok){if(!ok)askPw()})}else{askPw()}
 })();
 </script></body></html>
